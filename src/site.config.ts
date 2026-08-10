@@ -70,11 +70,6 @@ export const PROFILE: ProfileConfig = {
 }
 
 export const NAV_LINKS: LinkConfig[] = [
-  { href: "/projects", label: "Projects" },
-  { href: "/publications", label: "Publications" },
-  { href: "/blog", label: "Blog" },
-  { href: "/uses", label: "Tech" },
-  { href: "/now", label: "Now" },
 ]
 
 export const NAVIGATION: LinkConfig[] = NAV_LINKS.map(({ href, label }) => ({
