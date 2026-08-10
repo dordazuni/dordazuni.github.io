@@ -7,12 +7,12 @@
   "author": "My (Chiffon) Nguyen",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mychiffonn/astro-scholar.git"
+    "url": "git+https://github.com/dordazuni/dordazuni.github.io.git"
   },
   "bugs": {
-    "url": "https://github.com/mychiffonn/astro-scholar/issues"
+    "url": "https://github.com/dordazuni/dordazuni.github.io"
   },
-  "homepage": "https://github.com/mychiffonn/astro-scholar#readme",
+  "homepage": "https://github.com/dordazuni/dordazuni.github.io",
   "keywords": [
     "astro",
     "astro-theme",
