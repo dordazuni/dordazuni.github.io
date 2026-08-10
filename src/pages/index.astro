@@ -56,8 +56,10 @@ const recentPostsMetadata = await Promise.all(
 )
 ---
 
-<!--Layout title="Home">
+<Layout title="Home">
   <Profile profile={PROFILE} />
+
+  <!--
 
   {careerHighlights.length > 0 && (
       <Section
@@ -123,7 +125,8 @@ const recentPostsMetadata = await Promise.all(
         </prose-content>
       </Section>
     )}
-</Layout-->
+    -->
+</Layout>
 
 <style>
   .selected-publications {
