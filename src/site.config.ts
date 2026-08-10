@@ -7,11 +7,11 @@ import type {
 } from "@/types"
 
 export const SITE: SiteConfig = {
-  title: "Astro Scholar",
+  title: "Astro Blog",
   description:
-    "Research in computational social science, open methods, and responsible computing.",
+    "Mi primer Blog",
   href: "https://astro-scholar.pages.dev",
-  author: "Alex Morgan",
+  author: "David Alejandro Ordaz",
   dir: "ltr",
   defaultPageImage: "/img/social-preview.png",
   defaultPostImage: "/img/social-preview.png",
@@ -51,10 +51,10 @@ export const SITE: SiteConfig = {
 
 export const PROFILE: ProfileConfig = {
   name: SITE.title,
-  tagline: "Computational social scientist and open-methods",
-  email: "alex@example.edu",
-  location: "Example City",
-  pronouns: "they/them",
+  tagline: "Mi primer blog en astro",
+  email: "dordaz@unbosque.edu.co",
+  location: "Bogota City",
+  pronouns: "",
   links: {
     github: "https://github.com/mychiffonn/astro-scholar",
     website: "https://mychiffonn.com/",
@@ -63,7 +63,7 @@ export const PROFILE: ProfileConfig = {
   // [] = none, or list keys in the order you want them. The header renders its
   // set as bare icons, so it defaults to a handful rather than everything.
   linksPlacement: {
-    header: ["email", "github"],
+    header: [],
     about: false,
     footer: true,
   },
