@@ -95,9 +95,9 @@ export const PUB_CONFIG: PublicationConfig = {
 
 export const FOOTER: FooterConfig = {
   credits: true,
-  sourceCode: "https://github.com/mychiffonn/astro-scholar",
+  sourceCode: "https://github.com/dordazuni/dordazuni.github.io",
   sourceContent:
-    "https://github.com/mychiffonn/astro-scholar/tree/main/src/content",
+    "https://github.com/dordazuni/dordazuni.github.io",
   footerLinks: [],
 }
 
