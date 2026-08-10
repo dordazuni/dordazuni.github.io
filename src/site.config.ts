@@ -56,8 +56,8 @@ export const PROFILE: ProfileConfig = {
   location: "Bogota City",
   pronouns: "",
   links: {
-    github: "https://github.com/mychiffonn/astro-scholar",
-    website: "https://mychiffonn.com/",
+    github: "https://github.com/dordazuni/dordazuni.github.io",
+    website: "https://github.com/dordazuni/dordazuni.github.io",
   },
   // where the links above show up. true = that section's default set, false or
   // [] = none, or list keys in the order you want them. The header renders its
