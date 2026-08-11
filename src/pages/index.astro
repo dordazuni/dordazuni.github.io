@@ -58,6 +58,21 @@ const recentPostsMetadata = await Promise.all(
 
 <Layout title="Home">
   <Profile profile={PROFILE} />
+
+  <section class="seccion-perfil">
+    <div class="contenedor-video">
+      <h3>PRESENTACIÓN</h3>
+      <!--
+        El video vive en public/videos/demo-pitzalab.mp4
+        Usamos BASE_URL para que las rutas funcionen perfecto en GitHub Pages
+      -->
+      <video controls preload="metadata" class="video-reproductor">
+        <source src={`${import.meta.env.BASE_URL}/videos/entrevista.mp4`} type="video/mp4" />
+        Tu navegador no soporta la reproducción de video.
+      </video>
+    </div>
+  </section>
+
  <!--
   {careerHighlights.length > 0 && (
       <Section
@@ -172,4 +187,38 @@ const recentPostsMetadata = await Promise.all(
       -webkit-line-clamp: 3;
     }
   }
+
+  .seccion-perfil {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    text-align: center;
+    font-family: sans-serif;
+  }
+
+  .contenedor-avatar {
+    margin-bottom: 2rem;
+  }
+
+  .avatar-img {
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #333;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+
+  .contenedor-video {
+    margin-top: 2rem;
+    background: #f5f5f5;
+    padding: 1rem;
+    border-radius: 12px;
+  }
+
+  .video-reproductor {
+    width: 100%;
+    max-width: 600px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  }
+
 </style>
