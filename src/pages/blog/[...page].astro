@@ -68,6 +68,13 @@ if (!hasNoPosts) {
     count: allMainPosts.filter((p) => p.data.stage === s.name).length,
   })).filter((s) => s.count > 0)
 }
+
+// Si ya importaste Image arriba, no necesitas repetirlo
+import { Image } from 'astro:assets';
+
+// Importa la imagen de tu evidencia desde la carpeta assets
+import evidencia1 from '../assets/evidencia1.jpg';
+
 ---
 
 <Layout
@@ -77,79 +84,24 @@ if (!hasNoPosts) {
     { label: `Page ${page.currentPage}`, icon: "copy" },
   ]}
 >
-  {(stageCounts.length > 0 || numTags > 0) && (
-      <nav class="blog-filters" aria-label="Browse posts">
-        {stageCounts.length > 0 && (
-          <filter-group>
-            <h2>
-              Browse by Stages
-            </h2>
-            <filter-chips>
-              {stageCounts.map(({ name, count }) => (
-                <Badge
-                  href={`/blog/stages/${name}`}
-                  variant={getStageVariant(name)}
-                  aria-label={`${name}, ${formatCount(count, "post")}`}
-                >
-                  <Icon name={name} size="0.75rem" />
-                  {name}
-                  <span class="count" aria-hidden="true">({count})</span>
-                </Badge>
-              ))}
-            </filter-chips>
-          </filter-group>
-        )}
-        {numTags > 0 && (
-          <filter-group>
-            <h2>
-              Browse by Tags
-            </h2>
-            <filter-chips>
-              {displayTags.map(({ tag, count }) => (
-                <TaxonomyChip
-                  href={`/blog/tags/${tag}`}
-                  label={tag}
-                  count={count}
-                  countNoun="post"
-                />
-              ))}
-              {moreTagsButton && (
-                <Badge href="/blog/tags" variant="outline">
-                  all {formatCount(numTags, "tag")}
-                  <Icon name="arrow-right" size="0.75rem" />
-                </Badge>
-              )}
-            </filter-chips>
-          </filter-group>
-        )}
-      </nav>
-    )}
-  <blog-index>
-    {hasNoPosts ? (
-        <section class="empty-state">
-          <h2>No posts yet</h2>
-          <p>Check back later for new content!</p>
-        </section>
-      ) : (
-        <>
-          <p class="post-count">
-            Showing {page.start + 1}–{page.end + 1} of {formatCount(page.total, "post")}
-          </p>
-          {postsByYear.map(({ year, posts }) => (
-            <section class="post-year">
-              <h2>{year}</h2>
-              <ul>
-                {posts.map((metadata) => (
-                  <li>
-                    <PreviewCard metadata={metadata} />
-                  </li>
-                ))}
-              </ul>
-            </section>
-          ))}
-        </>
-      )}
-  </blog-index>
+<section class="seccion-evidencias">
+  <h3>Evidencias y Proyectos</h3>
+  <p>Galería de trabajos y desarrollos recientes.</p>
+
+  <div class="galeria">
+    <!-- Tarjeta de la primera evidencia -->
+    <article class="tarjeta-evidencia">
+      <Image
+        src={evidencia1}
+        alt="Evidencia1"
+        class="imagen-evidencia"
+      />
+      <div class="info-evidencia">
+        <h4>Diagrama</h4>
+      </div>
+    </article>
+  </div>
+</section>
 
   <Pagination
     currentPage={page.currentPage}
@@ -239,4 +191,78 @@ if (!hasNoPosts) {
     margin: 0;
     list-style: none;
   }
+
+
+    .seccion-evidencias {
+      max-width: 900px;
+      margin: 4rem auto;
+      padding: 0 2rem;
+      text-align: center;
+      font-family: sans-serif;
+    }
+
+    .seccion-evidencias h3 {
+      color: #222;
+      margin-bottom: 0.5rem;
+    }
+
+    /* Usamos CSS Grid. Ahora mismo se verá centrada, pero cuando agregues
+       más tarjetas, se organizarán solas en varias columnas */
+    .galeria {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      margin-top: 2rem;
+      max-width: 500px; /* Ancho máximo para una sola tarjeta */
+      margin-inline: auto; /* Centra la tarjeta actual */
+    }
+
+    /* Cuando agregues más de una tarjeta y la pantalla sea grande, se adaptarán */
+    @media (min-width: 768px) {
+      .galeria {
+        max-width: 100%;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      }
+    }
+
+    .tarjeta-evidencia {
+      background: #ffffff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border: 1px solid #eaeaea;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .tarjeta-evidencia:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+
+    .imagen-evidencia {
+      width: 100%;
+      height: 250px;
+      object-fit: cover; /* Asegura que la imagen no se deforme */
+      display: block;
+    }
+
+    .info-evidencia {
+      padding: 1.5rem;
+      text-align: left;
+    }
+
+    .info-evidencia h4 {
+      margin: 0 0 0.5rem 0;
+      color: #333;
+      font-size: 1.2rem;
+    }
+
+    .info-evidencia p {
+      margin: 0;
+      color: #666;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
 </style>
