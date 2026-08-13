@@ -68,13 +68,6 @@ if (!hasNoPosts) {
     count: allMainPosts.filter((p) => p.data.stage === s.name).length,
   })).filter((s) => s.count > 0)
 }
-
-// Si ya importaste Image arriba, no necesitas repetirlo
-import { Image } from 'astro:assets';
-
-// Importa la imagen de tu evidencia desde la carpeta assets
-import evidencia1 from '../assets/evidencia1.jpg';
-
 ---
 
 <Layout
@@ -91,8 +84,8 @@ import evidencia1 from '../assets/evidencia1.jpg';
   <div class="galeria">
     <!-- Tarjeta de la primera evidencia -->
     <article class="tarjeta-evidencia">
-      <Image
-        src={evidencia1}
+      <img
+        src={`${import.meta.env.BASE_URL}img/evidencia1.jpeg`}
         alt="Evidencia1"
         class="imagen-evidencia"
       />
