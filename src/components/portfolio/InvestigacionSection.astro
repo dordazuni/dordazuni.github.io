@@ -1,0 +1,539 @@
+---
+import Badge from "@/components/base/Badge.astro"
+
+interface TemaInvestigacion {
+  id: string
+  numero: string
+  area: string
+  titulo: string
+  fuentePrincipal: string
+  complemento?: string
+  sintesisTeorica: string
+  puntosClave: string[]
+  ejemploTecnico: {
+    etiqueta: string
+    codigo: string
+  }
+  porQueEncaja: string
+}
+
+const temas: TemaInvestigacion[] = [
+  {
+    id: "tema-null-3vl",
+    numero: "Investigación 01",
+    area: "Lógica Relacional & SQL",
+    titulo: "El problema de los NULL y la lógica de tres valores (3VL)",
+    fuentePrincipal:
+      "E. F. Codd (1979), “Extending the Database Relational Model to Capture More Meaning”, ACM Transactions on Database Systems, 4(4), 397–434.",
+    complemento:
+      "C. J. Date, Database in Depth (O’Reilly, 2005), donde critica el uso de NULL y la complejidad que introduce la lógica trivalente.",
+    sintesisTeorica:
+      "En el modelo relacional extendido, NULL no es un valor sino una marca que indica información ausente o desconocida. Al evaluar predicados con NULL, la lógica booleana clásica de dos valores se amplía a una lógica trivalente (TRUE, FALSE y UNKNOWN). Toda comparación directa mediante operadores ordinarios (=, <>, <, >) contra NULL devuelve UNKNOWN, y dado que una cláusula WHERE solo conserva las filas cuyo predicado es estrictamente TRUE, las comparaciones como NULL = NULL jamás filtran filas como verdaderas.",
+    puntosClave: [
+      "En lógica trivalente (3VL), las expresiones NULL = NULL y NULL <> NULL evalúan a UNKNOWN, por lo que SQL exige los predicados especiales IS NULL e IS NOT NULL.",
+      "Las funciones de agregación (SUM, AVG, MIN, MAX, COUNT(columna)) ignoran los valores NULL, mientras que COUNT(*) contabiliza todas las filas independientemente de si contienen nulos.",
+      "C. J. Date argumenta que el uso de NULL rompe el principio de cierre relacional y puede inducir errores sutiles cuando un usuario asume que NOT (A) equivale al complemento exacto de A.",
+    ],
+    ejemploTecnico: {
+      etiqueta: "Oracle SQL — Efecto de NULL en JOIN y agregaciones",
+      codigo: `-- Todos los empleados, incluso quienes tienen id_departamento IS NULL:
+SELECT e.id_empleado,
+       e.nombre,
+       d.nombre_depto,
+       COUNT(e.comision) AS con_comision,
+       COUNT(*)          AS total_filas
+FROM empleado e
+LEFT JOIN departamento d
+  ON e.id_departamento = d.id_departamento
+GROUP BY e.id_empleado, e.nombre, d.nombre_depto;`,
+    },
+    porQueEncaja:
+      "Explica por qué NULL = NULL no es verdadero y qué pasa con NULL en los JOIN y en las agregaciones. Se conecta directamente con la regla del profesor sobre usar LEFT JOIN cuando se piden todos los empleados: un INNER JOIN descartaría a los empleados con clave foránea en NULL.",
+  },
+  {
+    id: "tema-origen-sql",
+    numero: "Investigación 02",
+    area: "Historia & Álgebra Relacional",
+    titulo: "El origen de SQL: del Álgebra Relacional a SEQUEL",
+    fuentePrincipal:
+      "Donald D. Chamberlin y Raymond F. Boyce (1974), “SEQUEL: A Structured English Query Language”, Proceedings of the 1974 ACM SIGFIDET Workshop on Data Description, Access and Control.",
+    sintesisTeorica:
+      "Tras la publicación del modelo relacional de E. F. Codd (1970) basado en el álgebra relacional y el cálculo relacional de tuplas, los investigadores de IBM en San José buscaron un lenguaje que mantuviera el poder expresivo de los operadores matemáticos pero pudiera ser escrito por profesionales sin formación en lógica formal. Así nació SEQUEL (posteriormente renombrado SQL), estructurado mediante bloques declarativos en inglés (SELECT, FROM, WHERE) donde el usuario especifica qué datos necesita y no cómo recorrerlos.",
+    puntosClave: [
+      "Proyección (π) del álgebra relacional se traduce en la lista de atributos de la cláusula SELECT (con DISTINCT para preservar la semántica de conjuntos).",
+      "Selección o restricción (σ) corresponde a los predicados booleanos de filtrado en la cláusula WHERE.",
+      "Reunión natural y theta-join (⋈) evolucionaron desde condiciones de igualdad en el WHERE hasta la sintaxis explícita JOIN ... ON del estándar ANSI SQL.",
+    ],
+    ejemploTecnico: {
+      etiqueta: "Equivalencia Álgebra Relacional → SQL",
+      codigo: `-- Álgebra Relacional:
+-- π nombre, salario (σ salario > 3000 (EMPLEADO ⋈ id_depto (σ ubicacion = 'Bogota' (DEPARTAMENTO))))
+
+-- Traducción declarativa en SQL:
+SELECT e.nombre, e.salario
+FROM empleado e
+JOIN departamento d ON e.id_depto = d.id_depto
+WHERE d.ubicacion = 'Bogota'
+  AND e.salario > 3000;`,
+    },
+    porQueEncaja:
+      "Cuenta cómo IBM convirtió el álgebra relacional de Codd en un lenguaje declarativo parecido al inglés. Une directamente las evidencias de álgebra relacional con la formulación de consultas SQL.",
+  },
+  {
+    id: "tema-12-reglas-codd",
+    numero: "Investigación 03",
+    area: "Teoría Relacional & SGBD",
+    titulo: "Las 12 reglas de Codd y su evaluación en Oracle",
+    fuentePrincipal:
+      "E. F. Codd (1985), “Is Your DBMS Really Relational?” y “Does Your DBMS Run By the Rules?”, publicados en Computerworld (14 y 21 de octubre de 1985).",
+    sintesisTeorica:
+      "A mediados de los años ochenta muchos sistemas comerciales se promocionaban como relacionales solo por mostrar tablas. Codd definió la Regla 0 (el sistema debe gestionar la base de datos íntegramente mediante sus capacidades relacionales) junto con 12 reglas numeradas del 1 al 12 para evaluar la fidelidad relacional de un SGBD: desde la representación lógica de toda la información en tablas y el catálogo activo en línea, hasta la independencia física, lógica, de integridad y la regla de no subversión.",
+    puntosClave: [
+      "Reglas que Oracle cumple con solidez: Regla 1 (Información en tablas), Regla 4 (Catálogo dinámico en línea consultable vía DATA DICTIONARY / USER_TABLES), Regla 7 (Inserción, actualización y borrado orientados a conjuntos), Reglas 8 y 9 (Independencia física mediante tablespaces/índices e independencia lógica con vistas) y Regla 12 (No subversión).",
+      "Matices y desviaciones en Oracle: En la Regla 3 (Tratamiento sistemático de NULL), Oracle trata históricamente la cadena vacía '' en VARCHAR2 como equivalente a NULL.",
+      "En la Regla 2 (Acceso garantizado sin punteros) y Regla 6 (Actualización de vistas), Oracle permite el pseudoatributo físico ROWID y restringe la actualización directa de vistas con agregaciones o ciertas uniones complejas salvo mediante triggers INSTEAD OF.",
+    ],
+    ejemploTecnico: {
+      etiqueta: "Oracle Data Dictionary (Regla 4) y matiz de NULL (Regla 3)",
+      codigo: `-- Regla 4: Catálogo dinámico en línea consultado con el mismo lenguaje SQL
+SELECT table_name, column_name, data_type, nullable
+FROM user_tab_columns
+WHERE table_name = 'ASIGNACION';
+
+-- Regla 3 en Oracle: '' en VARCHAR2 se almacena y evalúa como NULL
+SELECT CASE WHEN '' IS NULL THEN 'Oracle trata cadena vacía como NULL' END AS regla_3
+FROM dual;`,
+    },
+    porQueEncaja:
+      "Son las condiciones que según Codd debe cumplir un sistema para llamarse verdaderamente relacional, permitiendo evaluar de forma crítica cuántas y cómo las cumple Oracle Database.",
+  },
+  {
+    id: "tema-optimizador-selinger",
+    numero: "Investigación 04",
+    area: "Optimización & Planes de Ejecución",
+    titulo: "Cómo decide el motor ejecutar una consulta: el Optimizador Basado en Costos",
+    fuentePrincipal:
+      "Patricia G. Selinger, M. M. Astrahan, D. D. Chamberlin, R. A. Lorie y T. G. Price (1979), “Access Path Selection in a Relational Database Management System”, Proceedings of the 1979 ACM SIGMOD International Conference on Management of Data.",
+    sintesisTeorica:
+      "En el motor System R de IBM, Patricia Selinger y su equipo diseñaron el primer optimizador basado en costos (CBO). Dado que SQL es declarativo, una misma consulta admite múltiples planes físicos. El optimizador recopila estadísticas del catálogo (cardinalidad de tablas, bloques en disco, factor de agrupamiento de índices), estima la selectividad de cada predicado y utiliza programación dinámica para elegir la combinación de rutas de acceso (Full Table Scan vs. Index Scan) y algoritmos de unión (Nested Loops, Sort-Merge Join, Hash Join) que minimiza la fórmula Costo = I/O + W · CPU.",
+    puntosClave: [
+      "Rutas de acceso a tablas: un Index Range Scan es óptimo para alta selectividad (pocas filas), mientras que un Full Table Scan con lectura multibloque supera al índice cuando se recupera un gran porcentaje de la tabla.",
+      "Algoritmos de JOIN: Nested Loops destaca con tablas pequeñas e índice en la tabla interna; Hash Join domina en uniones por igualdad de grandes volúmenes; Sort-Merge Join aprovecha datos preordenados o rangos.",
+      "En Oracle, el comando EXPLAIN PLAN y el paquete DBMS_XPLAN revelan el árbol de ejecución, el costo estimado (Cost), la cardinalidad (Rows) y los predicados de acceso vs. filtrado.",
+    ],
+    ejemploTecnico: {
+      etiqueta: "Oracle SQL — Inspección del Plan de Ejecución (EXPLAIN PLAN)",
+      codigo: `EXPLAIN PLAN FOR
+SELECT d.nombres, a.fecha_creacion, e.codigo
+FROM asignacion a
+JOIN docente d ON a.id_docente = d.id_docente
+JOIN espacio e ON a.id_espacio = e.id_espacio
+WHERE a.id_version = 1;
+
+SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY);`,
+    },
+    porQueEncaja:
+      "Es el origen del optimizador basado en costos. Explica por qué la misma consulta SQL se puede ejecutar de formas muy distintas y se conecta directamente con la lectura del plan de ejecución (EXPLAIN PLAN) en Oracle.",
+  },
+  {
+    id: "tema-acid-aries",
+    numero: "Investigación 05",
+    area: "Transacciones & Recuperación",
+    titulo: "La continuación de ACID: el algoritmo ARIES",
+    fuentePrincipal:
+      "C. Mohan, Don Haderle, Bruce Lindsay, Hamid Pirahesh y Peter Schwarz (1992), “ARIES: A Transaction Recovery Method Supporting Fine-Granularity Locking and Partial Rollbacks Using Write-Ahead Logging”, ACM Transactions on Database Systems, 17(1), 94–162.",
+    sintesisTeorica:
+      "Para maximizar el rendimiento concurrente, los motores modernos administran la memoria caché (Buffer Pool) con políticas STEAL (el motor puede escribir a disco páginas modificadas por transacciones que aún no han hecho COMMIT) y NO-FORCE (al confirmar una transacción con COMMIT no se obliga a forzar inmediatamente a disco todas las páginas de datos, sino únicamente el registro en la bitácora). ARIES garantiza Atomicidad y Durabilidad mediante Write-Ahead Logging (WAL), números de secuencia LSN y tres fases de recuperación tras un fallo.",
+    puntosClave: [
+      "Protocolo WAL (Write-Ahead Logging): ninguna página sucia se escribe a disco (STEAL) antes de que su registro de cambio esté persistido en el log, y ningún COMMIT se confirma sin haber volcado el Redo Log (NO-FORCE).",
+      "Fase 1 (Análisis) y Fase 2 (Redo — 'Repetir la historia'): al reiniciar tras una caída, el motor escanea el log desde el último Checkpoint y rehace todas las operaciones registradas (tanto de transacciones confirmadas como no confirmadas) para reconstruir el estado exacto previo al fallo.",
+      "Fase 3 (Undo): el motor recorre el log hacia atrás deshaciendo los cambios de las transacciones activas que nunca hicieron COMMIT, escribiendo Compensation Log Records (CLR) para evitar trabajo duplicado si ocurre otro fallo durante la recuperación.",
+    ],
+    ejemploTecnico: {
+      etiqueta: "Ciclo transaccional respaldado por WAL / Redo & Undo en Oracle",
+      codigo: `-- Transacción ACID con soporte de Redo Log (NO-FORCE) y Undo Tablespace (STEAL):
+UPDATE seccion
+SET matricula_real = matricula_real + 1
+WHERE numero = 101 AND id_curso = 500 AND id_periodo = 20261;
+
+-- Si ocurre un fallo antes del COMMIT, la fase UNDO revierte el cambio.
+-- Al ejecutar COMMIT, el LGWR escribe el Redo Log en disco garantizando Durabilidad:
+COMMIT;`,
+    },
+    porQueEncaja:
+      "Es la técnica que usan los motores actuales para recuperarse ante fallos con políticas STEAL y NO-FORCE. Constituye la segunda parte natural de la evidencia de propiedades ACID.",
+  },
+  {
+    id: "tema-bodegas-estrella",
+    numero: "Investigación 06",
+    area: "Analítica de Datos & OLAP",
+    titulo: "Bodegas de datos y modelo estrella (Data Warehouse & Star Schema)",
+    fuentePrincipal:
+      "Ralph Kimball y Margy Ross, The Data Warehouse Toolkit: The Definitive Guide to Dimensional Modeling (3.ª ed., Wiley, 2013).",
+    sintesisTeorica:
+      "En bases de datos transaccionales (OLTP) normalizamos hasta Tercera Forma Normal (3FN) o BCNF para eliminar redundancia y proteger la integridad en operaciones rápidas de inserción y actualización. Sin embargo, en sistemas analíticos (OLAP / Data Warehouses) donde se consultan millones de registros históricos, un esquema altamente normalizado obliga a encadenar decenas de JOIN costosos. Kimball propone el Modelado Dimensional mediante el Esquema Estrella: una tabla de hechos central rodeada por tablas de dimensiones desnormalizadas a propósito.",
+    puntosClave: [
+      "Tabla de Hechos (Fact Table): almacena las mediciones numéricas del proceso de negocio (métricas aditivas como monto, cantidad, horas) junto con las claves foráneas sustitutas (surrogate keys) que definen la granularidad (el grano) del hecho.",
+      "Tablas de Dimensiones (Dimension Tables): tablas anchas y desnormalizadas (DIM_TIEMPO, DIM_BUQUE, DIM_CURSO, DIM_DOCENTE) que contienen los atributos textuales y jerárquicos usados para filtrar (WHERE) y agrupar (GROUP BY).",
+      "Contraste OLTP vs. OLAP: la normalización optimiza la escritura transaccional sin anomalías; la desnormalización controlada en estrella optimiza la lectura analítica y simplifica las consultas de inteligencia de negocios.",
+    ],
+    ejemploTecnico: {
+      etiqueta: "Consulta Analítica OLAP sobre un Modelo Estrella",
+      codigo: `-- Esquema Estrella: Tabla de hechos FACT_EMBARQUE unida en un solo salto a sus dimensiones
+SELECT dt.anio,
+       dt.trimestre,
+       dp.pais_origen,
+       db.tipo_buque,
+       SUM(f.peso_toneladas) AS total_toneladas,
+       AVG(f.tiempo_descarga_horas) AS promedio_horas
+FROM fact_embarque f
+JOIN dim_tiempo dt ON f.sk_tiempo = dt.sk_tiempo
+JOIN dim_puerto dp ON f.sk_puerto = dp.sk_puerto
+JOIN dim_buque  db ON f.sk_buque  = db.sk_buque
+WHERE dt.anio = 2026
+GROUP BY dt.anio, dt.trimestre, dp.pais_origen, db.tipo_buque;`,
+    },
+    porQueEncaja:
+      "Explica por qué en análisis de datos se desnormaliza a propósito con tablas de hechos y dimensiones. Es un excelente contraste con las evidencias de normalización y conecta el curso con la ingeniería y analítica de datos.",
+  },
+]
+---
+
+<section id="investigacion" class="investigacion-section" aria-labelledby="investigacion-heading">
+  <header class="section-header">
+    <div class="section-eyebrow">
+      <Badge variant="outline">Fundamentos Teóricos & Papers Clásicos</Badge>
+      <span class="section-count">{temas.length} temas de investigación</span>
+    </div>
+    <h2 id="investigacion-heading">Temas de Investigación en Bases de Datos</h2>
+    <p class="section-lead">
+      Artículos fundacionales de la literatura científica en bases de datos (Codd, Date, Chamberlin &amp; Boyce, Selinger, Mohan y Kimball) conectados directamente con las evidencias prácticas de <strong>álgebra relacional, SQL, normalización, planes de ejecución en Oracle y transacciones ACID</strong>.
+    </p>
+  </header>
+
+  <nav class="temas-jumpnav" aria-label="Índice rápido de temas de investigación">
+    {temas.map((tema) => (
+      <a href={`#${tema.id}`} class="jump-pill">
+        <span class="jump-pill-num">{tema.numero} &middot; {tema.area}</span>
+        <span class="jump-pill-title">{tema.titulo}</span>
+      </a>
+    ))}
+  </nav>
+
+  <div class="temas-grid">
+    {temas.map((tema) => (
+      <article id={tema.id} class="tema-card">
+        <header class="tema-header">
+          <div class="tema-meta">
+            <span class="tema-num">{tema.numero}</span>
+            <span class="tema-area">{tema.area}</span>
+          </div>
+          <h3>{tema.titulo}</h3>
+        </header>
+
+        <div class="tema-fuentes">
+          <div class="fuente-item">
+            <span class="fuente-label">Fuente principal:</span>
+            <p>{tema.fuentePrincipal}</p>
+          </div>
+          {tema.complemento && (
+            <div class="fuente-item">
+              <span class="fuente-label">Complemento:</span>
+              <p>{tema.complemento}</p>
+            </div>
+          )}
+        </div>
+
+        <p class="tema-sintesis">{tema.sintesisTeorica}</p>
+
+        <div class="tema-puntos">
+          <h4>Conceptos Fundamentales</h4>
+          <ul>
+            {tema.puntosClave.map((punto) => (
+              <li>{punto}</li>
+            ))}
+          </ul>
+        </div>
+
+        <div class="tema-codigo-box">
+          <div class="codigo-header">
+            <span>{tema.ejemploTecnico.etiqueta}</span>
+          </div>
+          <pre><code>{tema.ejemploTecnico.codigo}</code></pre>
+        </div>
+
+        <aside class="tema-encaje" aria-label="Por qué encaja en el portafolio">
+          <h4>Por qué encaja en el portafolio</h4>
+          <p>{tema.porQueEncaja}</p>
+        </aside>
+      </article>
+    ))}
+  </div>
+</section>
+
+<style>
+  .investigacion-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-l);
+    margin-block: var(--space-xl);
+    scroll-margin-top: var(--header-height, 4rem);
+  }
+
+  .section-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+  }
+
+  .section-eyebrow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  .section-count {
+    color: var(--muted-foreground);
+    font-size: var(--step--1);
+    font-family: var(--font-mono);
+  }
+
+  .section-header h2 {
+    margin: 0;
+    color: var(--foreground);
+    font-size: var(--step-2);
+    font-weight: var(--font-weight-bold);
+    line-height: 1.25;
+  }
+
+  .section-lead {
+    margin: 0;
+    color: var(--muted-foreground);
+    font-size: var(--step-0);
+    line-height: 1.6;
+  }
+
+  .temas-jumpnav {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: var(--space-2xs);
+  }
+
+  .jump-pill {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: var(--space-2xs) var(--space-xs);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: color-mix(in oklab, var(--muted) 35%, transparent);
+    color: var(--foreground);
+    text-decoration: none;
+    transition-property: border-color, background-color, transform;
+    transition-duration: var(--motion-duration-fast);
+    transition-timing-function: var(--motion-ease);
+  }
+
+  .jump-pill:hover {
+    border-color: var(--accent);
+    background: color-mix(in oklab, var(--accent) 12%, transparent);
+    transform: translateY(-2px);
+  }
+
+  .jump-pill-num {
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .jump-pill-title {
+    font-size: var(--step--1);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.3;
+  }
+
+  .temas-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xl);
+  }
+
+  .tema-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+    padding: var(--space-m);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    background: color-mix(in oklab, var(--muted) 20%, var(--background));
+    scroll-margin-top: calc(var(--header-height, 4rem) + 1rem);
+    transition-property: border-color, box-shadow;
+    transition-duration: var(--motion-duration);
+    transition-timing-function: var(--motion-ease);
+  }
+
+  .tema-card:hover {
+    border-color: color-mix(in oklab, var(--accent) 45%, var(--border));
+    box-shadow: 0 0.75rem 2rem -1.25rem color-mix(in oklab, var(--accent) 22%, transparent);
+  }
+
+  .tema-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3xs);
+  }
+
+  .tema-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2xs);
+  }
+
+  .tema-num {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.15rem 0.55rem;
+    border-radius: var(--radius-md);
+    background: color-mix(in oklab, var(--accent) 20%, transparent);
+    color: var(--foreground);
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .tema-area {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.15rem 0.55rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    color: var(--muted-foreground);
+    font-size: var(--step--2);
+  }
+
+  .tema-header h3 {
+    margin: 0;
+    color: var(--foreground);
+    font-size: var(--step-1);
+    font-weight: var(--font-weight-semibold);
+    line-height: 1.3;
+  }
+
+  .tema-fuentes {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+    padding: var(--space-xs);
+    border-inline-start: 3px solid var(--accent);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    background: color-mix(in oklab, var(--muted) 42%, transparent);
+  }
+
+  .fuente-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .fuente-label {
+    color: var(--foreground);
+    font-size: var(--step--2);
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .fuente-item p {
+    margin: 0;
+    color: var(--muted-foreground);
+    font-size: var(--step--1);
+    line-height: 1.5;
+  }
+
+  .tema-sintesis {
+    margin: 0;
+    color: var(--foreground);
+    font-size: var(--step-0);
+    line-height: 1.65;
+  }
+
+  .tema-puntos {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+  }
+
+  .tema-puntos h4 {
+    margin: 0;
+    color: var(--muted-foreground);
+    font-size: var(--step--1);
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .tema-puntos ul {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+    margin: 0;
+    padding-inline-start: 1.25rem;
+    color: var(--foreground);
+    font-size: var(--step--1);
+    line-height: 1.55;
+  }
+
+  .tema-codigo-box {
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: color-mix(in oklab, var(--muted) 55%, var(--background));
+  }
+
+  .codigo-header {
+    padding: var(--space-3xs) var(--space-xs);
+    border-block-end: 1px solid var(--border);
+    background: color-mix(in oklab, var(--muted) 80%, transparent);
+    color: var(--muted-foreground);
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    font-weight: var(--font-weight-medium);
+  }
+
+  .tema-codigo-box pre {
+    overflow-x: auto;
+    margin: 0;
+    padding: var(--space-xs);
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    line-height: 1.55;
+    color: var(--foreground);
+  }
+
+  .tema-encaje {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3xs);
+    padding: var(--space-xs) var(--space-s);
+    border: 1px solid color-mix(in oklab, var(--primary) 45%, var(--border));
+    border-radius: var(--radius-lg);
+    background: color-mix(in oklab, var(--primary) 12%, transparent);
+  }
+
+  .tema-encaje h4 {
+    margin: 0;
+    color: var(--foreground);
+    font-size: var(--step--1);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .tema-encaje p {
+    margin: 0;
+    color: var(--foreground);
+    font-size: var(--step--1);
+    line-height: 1.55;
+  }
+</style>

@@ -1,0 +1,592 @@
+---
+import Badge from "@/components/base/Badge.astro"
+
+interface EvidenciaItem {
+  id: string
+  numero: string
+  titulo: string
+  subtitulo: string
+  notacion: string
+  herramienta: string
+  imagen: string
+  alt: string
+  resumen: string
+  entidadesPrincipales: string[]
+  analisisTecnico: {
+    concepto: string
+    detalle: string
+  }[]
+}
+
+const baseUrl = import.meta.env.BASE_URL
+
+const evidencias: EvidenciaItem[] = [
+  {
+    id: "evidencia-1",
+    numero: "Evidencia 01",
+    titulo: "Plataforma de Contenido y Streaming para Estudiantes",
+    subtitulo: "Diseño Conceptual de Base de Datos",
+    notacion: "Modelo Entidad-Relación (Notación Chen)",
+    herramienta: "Modelado Conceptual MER",
+    imagen: `${baseUrl}img/evidencia1.jpeg`,
+    alt: "Diagrama Entidad-Relación en notación Chen para plataforma de contenido de estudiantes con entidades ESTUDIANTE, USUARIO, CONTENIDO, TIPO y CATEGORIA",
+    resumen:
+      "Modela la estructura conceptual de una plataforma universitaria de consulta y reproducción multimedia, separando la identidad académica del estudiante de su perfil de usuario y registrando la trazabilidad de consumo de contenidos.",
+    entidadesPrincipales: [
+      "ESTUDIANTE (PK: cedula)",
+      "USUARIO (PK: nombre_usuario)",
+      "CONTENIDO (PK: codigo)",
+      "TIPO (PK: codigo)",
+      "CATEGORIA (PK: nombre)",
+    ],
+    analisisTecnico: [
+      {
+        concepto: "Relación 1:1 (Tener)",
+        detalle:
+          "Vincula a cada ESTUDIANTE (cedula, nombre, telefono) con una única cuenta de USUARIO (nombre_usuario, contraseña, gustos), garantizando unicidad de credenciales por alumno.",
+      },
+      {
+        concepto: "Relación N:M con atributos propios (Ver)",
+        detalle:
+          "La interacción entre USUARIO y CONTENIDO se modela como muchos-a-muchos e incorpora los atributos descriptivos historial_busqueda e historial_vistas directamente sobre el rombo de relación.",
+      },
+      {
+        concepto: "Clasificación y control de acceso (1:M)",
+        detalle:
+          "Cada CONTENIDO (año_lanzamiento, productor, vistas) se clasifica mediante relaciones Pertenecer (1:M) hacia TIPO y hacia CATEGORIA, donde se controla el atributo restriccion_edad.",
+      },
+    ],
+  },
+  {
+    id: "evidencia-2",
+    numero: "Evidencia 02",
+    titulo: "Sistema de Préstamo de Equipos y Unidades Institucionales",
+    subtitulo: "Modelo Entidad-Relación Extendido con Entidades Débiles",
+    notacion: "Notación Chen Extendida",
+    herramienta: "Modelado Conceptual Avanzado",
+    imagen: `${baseUrl}img/evidencia2.jpg`,
+    alt: "Diagrama Entidad-Relación en notación Chen con entidad fuerte EQUIPO, entidad débil UNIDAD, entidad USUARIO y relaciones Reemplazar, Pertenecer y Prestar",
+    resumen:
+      "Representa el control de inventario físico y préstamo de equipos tecnológicos, distinguiendo entre la referencia de catálogo (EQUIPO) y cada ejemplar físico individual (UNIDAD) asignado en préstamo a un USUARIO.",
+    entidadesPrincipales: [
+      "EQUIPO (PK: codigo)",
+      "UNIDAD (Entidad Débil — Discriminador: numero_consecutivo)",
+      "USUARIO (PK: codigo_institucional)",
+    ],
+    analisisTecnico: [
+      {
+        concepto: "Entidad débil y relación identificadora (Pertenecer 1:N)",
+        detalle:
+          "UNIDAD (doble rectángulo) depende existencialmente de EQUIPO mediante la relación débil Pertenecer (doble rombo). Su clave se conforma por el codigo del equipo más el discriminador parcial numero_consecutivo (subrayado punteado).",
+      },
+      {
+        concepto: "Relación reflexiva / recursiva 1:1 (Reemplazar)",
+        detalle:
+          "EQUIPO participa consigo mismo en la relación Reemplazar con los roles explícitos 'reemplazar' y 'ser reemplazado', permitiendo trazar la renovación tecnológica de activos.",
+      },
+      {
+        concepto: "Atributos multivaluados, compuestos y derivados",
+        detalle:
+          "Incluye proveedor como atributo multivaluado (doble óvalo) en EQUIPO, nombre_completo como atributo compuesto (nombre + apellido) en USUARIO, y mora como atributo derivado (óvalo punteado) en la relación Prestar (N:M) calculado a partir de fecha_salida y fecha_pactada.",
+      },
+    ],
+  },
+  {
+    id: "evidencia-3",
+    numero: "Evidencia 03",
+    titulo: "Operaciones Portuarias, Recaladas y Logística Marítima",
+    subtitulo: "Esquema Relacional con Jerarquía de Operarios y Supervisión",
+    notacion: "Modelo Relacional Físico (PK / FK / PF)",
+    herramienta: "Oracle SQL Developer Data Modeler",
+    imagen: `${baseUrl}img/evidencia3.jpg`,
+    alt: "Modelo relacional en Oracle SQL Developer Data Modeler para operaciones portuarias con tablas BUQUE, RECALADA, EMBARQUE, SERVICIO, CONTRATISTA, ABASTECIMIENTO, CUADRILLA y OPERARIO",
+    resumen:
+      "Esquema relacional completo de 18 tablas en Oracle para administrar el arribo de buques, recaladas, embarques de importadores, almacenamiento en bodegas, abastecimiento por contratistas y gestión de cuadrillas portuarias.",
+    entidadesPrincipales: [
+      "BUQUE (imo), CERTIFICADO, RECALADA (fecha_arribo), SERVICIO",
+      "IMPORTADOR, CORREO, EMBARQUE (EMBARQUE_ID), BODEGA",
+      "CONTRATISTA (nit), SEDE (ciudad, direccion), ABASTECIMIENTO, SUMINISTRO",
+      "CUADRILLA, OPERARIO, SUPERVISION, ESTIBADOR, EQUIPO_ESTIBADOR, GRUERO",
+    ],
+    analisisTecnico: [
+      {
+        concepto: "Trazabilidad naviera y logística de carga",
+        detalle:
+          "Conecta BUQUE y sus certificados con RECALADA y SERVICIO, vinculando cada EMBARQUE al IMPORTADOR (con tabla multivaluada CORREO) y a su ubicación física en BODEGA (zona, capacidad_m2).",
+      },
+      {
+        concepto: "Claves compuestas y cadena de abastecimiento",
+        detalle:
+          "Implementa clave primaria compuesta en SEDE (ciudad, direccion) asociada a CONTRATISTA, controlando los registros de ABASTECIMIENTO por recalada y el catálogo de SUMINISTRO.",
+      },
+      {
+        concepto: "Especialización Supertipo/Subtipo y Supervisión Recursiva",
+        detalle:
+          "OPERARIO se especializa en ESTIBADOR (con detalle multivaluado EQUIPO_ESTIBADOR) y GRUERO (horas_operacion, tipo_certificacion) compartiendo id_operario como PK/FK (PF). La tabla SUPERVISION resuelve la relación recursiva entre operarios y supervisores por periodo.",
+      },
+    ],
+  },
+  {
+    id: "evidencia-4",
+    numero: "Evidencia 04",
+    titulo: "Sistema de Gestión y Asignación de Horarios Académicos",
+    subtitulo: "Diseño Lógico con Supertipos Anidados y Reglas de Unicidad",
+    notacion: "Modelo Lógico (Notación Barker / Ingeniería de la Información)",
+    herramienta: "Oracle SQL Developer Data Modeler",
+    imagen: `${baseUrl}img/evidencia4.jpg`,
+    alt: "Modelo lógico en Oracle SQL Developer Data Modeler para gestión de horarios académicos con entidades ESPACIO, CURSO, SECCION, DOCENTE, FRANJA, ASIGNACION y VERSION_HORARIO",
+    resumen:
+      "Modelo lógico universitario para planificar periodos académicos, cursos, secciones, disponibilidad docente, dotación de aulas/laboratorios y control de versiones de horarios sin colisiones.",
+    entidadesPrincipales: [
+      "ESPACIO (Subtipos: LABORATORIO_COMPUTO, LABORATORIO_ESPECIALIZADO)",
+      "RECURSO, ESPACIO_RECURSO",
+      "CURSO, SECCION, PERIODO_ACADEMICO, FRANJA",
+      "DOCENTE, TIPO_CONTRATO, DISPONIBILIDAD, ASIGNACION, VERSION_HORARIO",
+      "USUARIO, ROL, LOG_AUDITORIA",
+    ],
+    analisisTecnico: [
+      {
+        concepto: "Herencia en modelo lógico (Supertipo ESPACIO)",
+        detalle:
+          "Representa visualmente los subtipos LABORATORIO_COMPUTO (numero_equipos) y LABORATORIO_ESPECIALIZADO (area) anidados dentro de la entidad supertipo ESPACIO.",
+      },
+      {
+        concepto: "Prevención declarativa de choques de horario",
+        detalle:
+          "La entidad ASIGNACION incorpora restricciones únicas compuestas (uk_docente_franja, uk_espacio_franja y uk_seccion_franja) para impedir que un docente, salón o grupo se asigne simultáneamente en la misma franja y versión.",
+      },
+      {
+        concepto: "Control de sobrecupo, versiones y auditoría",
+        detalle:
+          "SECCION modela cupo_max, cupo_min, matricula_proyectada, matricula_real y justificacion_sobrecupo, mientras VERSION_HORARIO y LOG_AUDITORIA aseguran la gobernanza y trazabilidad de cambios.",
+      },
+    ],
+  },
+  {
+    id: "evidencia-5",
+    numero: "Evidencia 05",
+    titulo: "Transformación al Modelo Relacional Físico de Horarios Académicos",
+    subtitulo: "Ingeniería Directa (Forward Engineering) para Oracle Database",
+    notacion: "Esquema Relacional Físico Normalizado (3FN)",
+    herramienta: "Oracle SQL Developer Data Modeler",
+    imagen: `${baseUrl}img/evidencia5.jpg`,
+    alt: "Modelo relacional físico en Oracle SQL Developer Data Modeler resultante de la transformación del sistema de horarios académicos con tablas puente DOCENTE_CURSO y CURSO_RECURSO",
+    resumen:
+      "Materialización física del modelo lógico de horarios académicos hacia tablas relacionales de Oracle con tipos de datos nativos (NUMBER, VARCHAR2, INTEGER, DATE, TIMESTAMP, CHAR), tablas asociativas y restricciones de integridad.",
+    entidadesPrincipales: [
+      "CURSO, DOCENTE_CURSO (IMPARTIR_PK), CURSO_RECURSO (REQUERIR_PK), RECURSO",
+      "ESPACIO, LABORATORIO_COMPUTO, LABORATORIO_ESPECIALIZADO, ESPACIO_RECURSO",
+      "SECCION, PERIODO_ACADEMICO, FRANJA, DISPONIBILIDAD",
+      "DOCENTE, TIPO_CONTRATO, ASIGNACION, VERSION_HORARIO, USUARIO, ROL, LOG_AUDITORIA",
+    ],
+    analisisTecnico: [
+      {
+        concepto: "Materialización de relaciones N:M en tablas puente",
+        detalle:
+          "Las relaciones muchos-a-muchos del modelo lógico se transforman en las tablas asociativas DOCENTE_CURSO (PK compuesta id_curso, id_docente) y CURSO_RECURSO (PK compuesta id_recurso, id_curso).",
+      },
+      {
+        concepto: "Implementación física de la jerarquía de ESPACIO",
+        detalle:
+          "Los subtipos pasan a ser tablas físicas independientes (LABORATORIO_COMPUTO y LABORATORIO_ESPECIALIZADO) cuya clave primaria id_espacio actúa simultáneamente como clave foránea (PF) hacia ESPACIO.",
+      },
+      {
+        concepto: "Tipado de Oracle y restricciones nombradas",
+        detalle:
+          "Define tipos VARCHAR2, NUMBER, TIMESTAMP y CHAR(1), junto con convenciones formales de nombres para claves primarias (_PK), foráneas (_FK) y restricciones de unicidad (_UN).",
+      },
+    ],
+  },
+]
+---
+
+<section id="evidencias" class="portfolio-section" aria-labelledby="evidencias-heading">
+  <header class="section-header">
+    <div class="section-eyebrow">
+      <Badge variant="outline">Portafolio de Bases de Datos</Badge>
+      <span class="section-count">{evidencias.length} diagramas comentados</span>
+    </div>
+    <h2 id="evidencias-heading">Evidencias de Modelado y Diseño Relacional</h2>
+    <p class="section-lead">
+      Recorrido práctico desde el diseño conceptual en notación <strong>Chen</strong> (entidades fuertes, débiles, relaciones reflexivas y atributos especiales) hasta el modelado lógico y físico en <strong>Oracle SQL Developer Data Modeler</strong>.
+    </p>
+  </header>
+
+  <nav class="evidencias-jumpnav" aria-label="Índice rápido de evidencias">
+    {evidencias.map((item) => (
+      <a href={`#${item.id}`} class="jump-pill">
+        <span class="jump-pill-num">{item.numero}</span>
+        <span class="jump-pill-title">{item.titulo}</span>
+      </a>
+    ))}
+  </nav>
+
+  <div class="evidencias-stack">
+    {evidencias.map((evidencia) => (
+      <article id={evidencia.id} class="evidencia-card">
+        <header class="evidencia-card-header">
+          <div class="evidencia-meta-row">
+            <span class="evidencia-badge">{evidencia.numero}</span>
+            <span class="evidencia-tag">{evidencia.notacion}</span>
+            <span class="evidencia-tool">{evidencia.herramienta}</span>
+          </div>
+          <h3>{evidencia.titulo}</h3>
+          <p class="evidencia-subtitle">{evidencia.subtitulo}</p>
+        </header>
+
+        <figure class="evidencia-figure">
+          <a
+            href={evidencia.imagen}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="evidencia-img-link"
+            title="Abrir diagrama en resolución completa en una nueva pestaña"
+          >
+            <img
+              src={evidencia.imagen}
+              alt={evidencia.alt}
+              loading="lazy"
+              class="evidencia-img"
+            />
+          </a>
+          <figcaption class="evidencia-figcaption">
+            <span>Vista completa sin recorte del esquema.</span>
+            <a
+              href={evidencia.imagen}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="evidencia-zoom-link"
+            >
+              Ampliar imagen original &nearr;
+            </a>
+          </figcaption>
+        </figure>
+
+        <div class="evidencia-body">
+          <p class="evidencia-resumen">{evidencia.resumen}</p>
+
+          <div class="evidencia-entidades">
+            <h4>Entidades y Tablas Clave</h4>
+            <ul class="entidades-chips">
+              {evidencia.entidadesPrincipales.map((entidad) => (
+                <li>
+                  <code>{entidad}</code>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div class="evidencia-analisis">
+            <h4>Decisiones de Diseño y Análisis Técnico</h4>
+            <div class="analisis-grid">
+              {evidencia.analisisTecnico.map((punto) => (
+                <div class="analisis-item">
+                  <h5>{punto.concepto}</h5>
+                  <p>{punto.detalle}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </article>
+    ))}
+  </div>
+</section>
+
+<style>
+  .portfolio-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-l);
+    margin-block: var(--space-xl);
+    scroll-margin-top: var(--header-height, 4rem);
+  }
+
+  .section-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+  }
+
+  .section-eyebrow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  .section-count {
+    color: var(--muted-foreground);
+    font-size: var(--step--1);
+    font-family: var(--font-mono);
+  }
+
+  .section-header h2 {
+    margin: 0;
+    color: var(--foreground);
+    font-size: var(--step-2);
+    font-weight: var(--font-weight-bold);
+    line-height: 1.25;
+  }
+
+  .section-lead {
+    margin: 0;
+    color: var(--muted-foreground);
+    font-size: var(--step-0);
+    line-height: 1.6;
+  }
+
+  .evidencias-jumpnav {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+    gap: var(--space-2xs);
+  }
+
+  .jump-pill {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: var(--space-2xs) var(--space-xs);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: color-mix(in oklab, var(--muted) 35%, transparent);
+    color: var(--foreground);
+    text-decoration: none;
+    transition-property: border-color, background-color, transform;
+    transition-duration: var(--motion-duration-fast);
+    transition-timing-function: var(--motion-ease);
+  }
+
+  .jump-pill:hover {
+    border-color: var(--primary);
+    background: color-mix(in oklab, var(--primary) 12%, transparent);
+    transform: translateY(-2px);
+  }
+
+  .jump-pill-num {
+    color: var(--primary);
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+  }
+
+  .jump-pill-title {
+    font-size: var(--step--1);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.3;
+  }
+
+  .evidencias-stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xl);
+  }
+
+  .evidencia-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-m);
+    padding: var(--space-m);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    background: color-mix(in oklab, var(--muted) 22%, var(--background));
+    scroll-margin-top: calc(var(--header-height, 4rem) + 1rem);
+    transition-property: border-color, box-shadow;
+    transition-duration: var(--motion-duration);
+    transition-timing-function: var(--motion-ease);
+  }
+
+  .evidencia-card:hover {
+    border-color: color-mix(in oklab, var(--primary) 45%, var(--border));
+    box-shadow: 0 0.75rem 2rem -1.25rem color-mix(in oklab, var(--primary) 22%, transparent);
+  }
+
+  .evidencia-card-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3xs);
+  }
+
+  .evidencia-meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2xs);
+  }
+
+  .evidencia-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.15rem 0.55rem;
+    border-radius: var(--radius-md);
+    background: color-mix(in oklab, var(--primary) 20%, transparent);
+    color: var(--foreground);
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .evidencia-tag,
+  .evidencia-tool {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.15rem 0.55rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    color: var(--muted-foreground);
+    font-size: var(--step--2);
+  }
+
+  .evidencia-card-header h3 {
+    margin: 0;
+    color: var(--foreground);
+    font-size: var(--step-1);
+    font-weight: var(--font-weight-semibold);
+    line-height: 1.3;
+  }
+
+  .evidencia-subtitle {
+    margin: 0;
+    color: var(--muted-foreground);
+    font-size: var(--step--1);
+  }
+
+  .evidencia-figure {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+    margin: 0;
+  }
+
+  .evidencia-img-link {
+    display: block;
+    overflow: hidden;
+    padding: var(--space-xs);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: #ffffff;
+  }
+
+  .evidencia-img {
+    display: block;
+    inline-size: 100%;
+    max-block-size: 28rem;
+    margin-inline: auto;
+    object-fit: contain;
+    transition-property: transform;
+    transition-duration: var(--motion-duration);
+    transition-timing-function: var(--motion-ease);
+  }
+
+  .evidencia-img-link:hover .evidencia-img {
+    transform: scale(1.015);
+  }
+
+  .evidencia-figcaption {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2xs);
+    color: var(--muted-foreground);
+    font-size: var(--step--2);
+  }
+
+  .evidencia-zoom-link {
+    color: var(--accent);
+    font-weight: var(--font-weight-medium);
+    text-decoration: none;
+  }
+
+  .evidencia-zoom-link:hover {
+    text-decoration: underline;
+  }
+
+  .evidencia-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+  }
+
+  .evidencia-resumen {
+    margin: 0;
+    color: var(--foreground);
+    font-size: var(--step-0);
+    line-height: 1.6;
+  }
+
+  .evidencia-entidades,
+  .evidencia-analisis {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+  }
+
+  .evidencia-entidades h4,
+  .evidencia-analisis h4 {
+    margin: 0;
+    color: var(--muted-foreground);
+    font-size: var(--step--1);
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .entidades-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .entidades-chips code {
+    display: inline-block;
+    padding: 0.2rem 0.55rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: color-mix(in oklab, var(--muted) 45%, transparent);
+    color: var(--foreground);
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+  }
+
+  .analisis-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-xs);
+  }
+
+  @media (width >= 44rem) {
+    .analisis-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .analisis-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3xs);
+    padding: var(--space-xs);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: color-mix(in oklab, var(--background) 70%, transparent);
+  }
+
+  .analisis-item h5 {
+    margin: 0;
+    color: var(--foreground);
+    font-size: var(--step--1);
+    font-weight: var(--font-weight-semibold);
+    line-height: 1.35;
+  }
+
+  .analisis-item p {
+    margin: 0;
+    color: var(--muted-foreground);
+    font-size: var(--step--1);
+    line-height: 1.55;
+  }
+</style>
